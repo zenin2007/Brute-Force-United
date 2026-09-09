@@ -1,0 +1,465 @@
+====================================================================================================
+                        MPLADS AI MONITOR: SYSTEM ARCHITECTURE,
+                        DATA FLOWCHARTS & PRODUCTION BLUEPRINT
+====================================================================================================
+Smart India Hackathon Prototype | Ministry of Statistics and Programme Implementation (MoSPI)
+System Name: MPLADS AI Monitor
+Tagline: AI-Powered Monitoring, Risk Detection & Decision Support for MPLADS
+Format: Plain Text Reference Blueprint & Flowchart Specification (.txt)
+====================================================================================================
+
+
+----------------------------------------------------------------------------------------------------
+TABLE OF CONTENTS
+----------------------------------------------------------------------------------------------------
+1. END-TO-END PRODUCTION ARCHITECTURE BLUEPRINT
+2. MASTER DATA INGESTION & PROCESSING FLOWCHART
+3. AI RISK SCORING ENGINE (7-INDICATOR ENSEMBLE) FLOWCHART
+4. SPECIFIC ANOMALY DETECTION ALGORITHM FLOWCHARTS
+   4.1 Utilization Gap (Financial vs Physical Mismatch)
+   4.2 Cost Overrun & Escalation Ceiling Check
+   4.3 Payment Clustering (Fiscal Rush Detector)
+   4.4 Duplicate Work (Semantic NLP + Haversine Geospatial)
+5. OFFICIAL 8-STAGE MPLADS MILESTONE LIFECYCLE FLOWCHART
+6. ROLE-BASED ACCESS & DYNAMIC DATA SCOPING FLOWCHART
+7. AUDIT ALERT TRIAGE & HUMAN-IN-THE-LOOP FEEDBACK FLOWCHART
+8. HACKATHON 5-7 MINUTE DEMONSTRATION STORYLINE FLOWCHART
+----------------------------------------------------------------------------------------------------
+
+
+====================================================================================================
+1. END-TO-END PRODUCTION ARCHITECTURE BLUEPRINT
+====================================================================================================
+
++--------------------------------------------------------------------------------------------------+
+| LAYER 01: GOVERNMENT DATA SOURCES & MULTI-PORTAL INGESTION                                      |
++--------------------------------------------------------------------------------------------------+
+|  [e-Sakshi Portal]          [PFMS / SNA Banks]        [ISRO Bhuvan Geoportal]    [State Treasuries]|
+|  - MP Recommendations       - Single Nodal Accounts   - Mobile Geotagged Photos  - Administrative  |
+|  - Technical Sanctions      - Voucher Disbursements   - Latitude / Longitude     - District Orders |
++--------------------------------------------------------------------------------------------------+
+                                               |
+                                               v (Encrypted TLS 1.3 / REST & Kafka Streams)
++--------------------------------------------------------------------------------------------------+
+| LAYER 02: SECURE DATA INGESTION & VALIDATION                                                    |
++--------------------------------------------------------------------------------------------------+
+|  +------------------------+  +------------------------+  +------------------------------------+  |
+|  |  Apache Kafka Brokers  |->| Great Expectations Lib |->| API Gateway / Schema Validation    |  |
+|  |  (Real-Time Ingestion) |  | (Data Integrity Checks)|  | (Type Checks, Range & Null Limits) |  |
+|  +------------------------+  +------------------------+  +------------------------------------+  |
++--------------------------------------------------------------------------------------------------+
+                                               |
+                                               v
++--------------------------------------------------------------------------------------------------+
+| LAYER 03: REPOSITORY & SPATIAL DATA LAKEHOUSE                                                   |
++--------------------------------------------------------------------------------------------------+
+|  +--------------------------------------------+  +--------------------------------------------+  |
+|  | PostgreSQL 16 + PostGIS Spatial Engine     |  | S3-Compatible Object Storage (MinIO/Ceph)  |  |
+|  | - Relational Project & Payment Records     |  | - Geotagged Inspection High-Res Photos     |  |
+|  | - Geospatial R-Tree Indexing on Work Sites|  | - DPR Documents, Sanction Letters & MBs   |  |
+|  +--------------------------------------------+  +--------------------------------------------+  |
++--------------------------------------------------------------------------------------------------+
+                                               |
+                                               v
++--------------------------------------------------------------------------------------------------+
+| LAYER 04: FEATURE ENGINEERING & AI/ML ANALYTICS PIPELINE (PYTHON / TYPESCRIPT SERVICES)          |
++--------------------------------------------------------------------------------------------------+
+|  +------------------------+  +------------------------+  +------------------------------------+  |
+|  | Disbursement Velocity  |  | Geospatial Proximity   |  | NLP Semantic Embeddings            |  |
+|  | (Daily Draw Rates)     |  | (Haversine & PostGIS)  |  | (Sentence-BERT & Jaccard Overlap)  |  |
+|  +------------------------+  +------------------------+  +------------------------------------+  |
+|                                              |                                                   |
+|                                              v                                                   |
+|  +--------------------------------------------------------------------------------------------+  |
+|  |                             SPECIALIZED ML & STATISTICAL MODELS                            |  |
+|  |  [Isolation Forest / GMM]       [Spatial KNN & NLP]         [XGBoost / ARIMA Regressors]   |  |
+|  |  Payment Clustering & Outlier  Duplicate Work Matcher       Delay & Budget Escalation Risk |  |
+|  +--------------------------------------------------------------------------------------------+  |
++--------------------------------------------------------------------------------------------------+
+                                               |
+                                               v
++--------------------------------------------------------------------------------------------------+
+| LAYER 05: EXPLAINABLE RISK SCORING & EARLY WARNING ENGINE                                       |
++--------------------------------------------------------------------------------------------------+
+|  - Deterministic 7-Indicator Weighted Ensemble Calculation (0 - 100 Score)                       |
+|  - Natural Language Audit Reason Generation ("Why was this work flagged?")                       |
+|  - Statutory Rule Verification (Checking 10 MPLADS Guideline Rules)                              |
+|  - Actionable Verification Recommendations for District Collectors & Executive Engineers        |
++--------------------------------------------------------------------------------------------------+
+                                               |
+                                               v
++--------------------------------------------------------------------------------------------------+
+| LAYER 06: ROLE-BASED DECISION SUPPORT INTERFACE (REACT 19 + TAILWIND CSS + RECHARTS + LEAFLET)  |
++--------------------------------------------------------------------------------------------------+
+|  [Ministry of Statistics]    [State Nodal Authority]   [District Authority]    [Member of Parliament]|
+|  - National Heatmaps         - State Performance       - Project Drilldown     - Constituency View   |
+|  - Inter-State Benchmarks    - Release Tracking        - MB Verification       - Citizen Impact      |
++--------------------------------------------------------------------------------------------------+
+                                               |
+                                               v
++--------------------------------------------------------------------------------------------------+
+| LAYER 07: HUMAN-IN-THE-LOOP TRIAGE & MODEL FEEDBACK RETRAINING LOOP                             |
++--------------------------------------------------------------------------------------------------+
+|  Authorized Officers Review Alerts -> [Acknowledge] / [Escalate] / [Resolve] / [False Positive]  |
+|                                                                                      |           |
+|  +-----------------------------------------------------------------------------------+           |
+|  v                                                                                               |
+|  False Positive Feedback Annotation Repository -> Automated MLflow Pipeline -> Model Calibration |
++--------------------------------------------------------------------------------------------------+
+
+
+====================================================================================================
+2. MASTER DATA INGESTION & PROCESSING FLOWCHART
+====================================================================================================
+
+      [ New MPLADS Recommendation / Payment Transaction / Geotag Upload ]
+                                     |
+                                     v
+                        [ Is Schema Valid and Complete? ]
+                                     |
+                    +----------------+----------------+
+                    |                                 |
+                 [ YES ]                            [ NO ]
+                    |                                 |
+                    v                                 v
+      [ Ingest into Data Store ]             [ Log to Ingestion Errors ]
+                    |                        [ Notify District Data Cell ]
+                    v
+      [ Feature Extraction ]
+      - Cumulative Expenditure
+      - Physical Progress (%)
+      - Financial Progress (%)
+      - Elapsed Days vs Schedule
+      - Recent Payments Window
+      - Nearest Neighbor Coordinates
+                    |
+                    v
+      +-------------------------------------------------------+
+      |       Execute Parallel Analytical Evaluators          |
+      +-------------------------------------------------------+
+      | 1. Financial Velocity Check   (Z-score calculation)   |
+      | 2. Cost Escalation Check      (Sanction vs Spend)     |
+      | 3. Progress Disparity Check   (Fin % minus Phy %)     |
+      | 4. Timeline Slippage Check    (Overdue calendar days) |
+      | 5. Payment Clustering Check   (7-day sliding window)  |
+      | 6. Co-location & NLP Check    (Nearby similar works)  |
+      | 7. Statutory Guideline Check  (10 compliance rules)   |
+      +-------------------------------------------------------+
+                                     |
+                                     v
+                   [ Aggregate Weighted Risk Score (0-100) ]
+                                     |
+                     +---------------+---------------+
+                     |                               |
+           [ Score >= 60 (High/Crit) ]     [ Score < 60 (Low/Med) ]
+                     |                               |
+                     v                               v
+         [ Generate Early Warning Alert ]   [ Normal Monitoring Log ]
+         [ Synthesize Explanations ]        [ Update Summary KPIs ]
+         [ Propose Action Checklist ]
+                     |
+                     v
+         [ Surface in Triage Center & Map ]
+
+
+====================================================================================================
+3. AI RISK SCORING ENGINE (7-INDICATOR ENSEMBLE) FLOWCHART
+====================================================================================================
+
+  Indicator Inputs:
+  -----------------
+  (S1) Financial Anomaly Index        [0 - 100]  x  Weight 0.25 (25%)  --+
+  (S2) Cost Deviation Overrun Index   [0 - 100]  x  Weight 0.20 (20%)  ----+
+  (S3) Timeline Delay Risk Index      [0 - 100]  x  Weight 0.15 (15%)  ------+
+  (S4) Payment Clustering Index       [0 - 100]  x  Weight 0.15 (15%)  --------+
+  (S5) Duplicate Similarity Match     [0 - 100]  x  Weight 0.10 (10%)  ----------+
+  (S6) Progress Mismatch (Util Gap)   [0 - 100]  x  Weight 0.10 (10%)  ------------+
+  (S7) Compliance Deviation Index     [0 - 100]  x  Weight 0.05 ( 5%)  --------------+
+                                                                                     |
+                                                                                     v
+                                                                        [ Sum Weighted Contributions ]
+                                                                                     |
+                                                                                     v
+                                                                         [ Score = Clamp(0, 100) ]
+                                                                                     |
+                                                                                     v
+                                                                       [ Classify Semantic Risk Tier ]
+                                                                                     |
+                         +-------------------+-------------------+-------------------+
+                         |                   |                   |                   |
+                         v                   v                   v                   v
+                    [ 0 - 29 ]          [ 30 - 59 ]         [ 60 - 79 ]         [ 80 - 100 ]
+                     LOW RISK           MEDIUM RISK          HIGH RISK         CRITICAL RISK
+                    (Emerald)            (Yellow)             (Amber)              (Red)
+                         |                   |                   |                   |
+                         v                   v                   v                   v
+                   Regular Status      Watchlist Table     Priority Alert      Urgent Audit Alert
+                   Monthly Review      Quarterly Check     Collector Notice    SNA Freeze Proposed
+
+
+====================================================================================================
+4. SPECIFIC ANOMALY DETECTION ALGORITHM FLOWCHARTS
+====================================================================================================
+
+----------------------------------------------------------------------------------------------------
+4.1 UTILIZATION GAP (PROGRESS MISMATCH DETECTOR)
+----------------------------------------------------------------------------------------------------
+
+                     [ Project Financial % & Physical % ]
+                                      |
+                                      v
+                 [ Gap = Financial Progress - Physical Progress ]
+                                      |
+         +----------------------------+----------------------------+
+         |                            |                            |
+    [ Gap <= 10% ]             [ 10% < Gap <= 25% ]           [ Gap > 25% ]
+         |                            |                            |
+         v                            v                            v
+   Normal Operation             Observation Tier             ANOMALY FLAGGED
+   (Advances cleared)           (Slight Advance Lead)        Score = 65 to 100
+                                                             "Financial progress significantly
+                                                             exceeds certified physical progress"
+
+----------------------------------------------------------------------------------------------------
+4.2 COST OVERRUN & ESCALATION CEILING CHECK
+----------------------------------------------------------------------------------------------------
+
+               [ Project Expenditure vs Administrative Sanction ]
+                                      |
+                                      v
+               [ Overrun % = ((Expenditure - Sanction) / Sanction) * 100 ]
+                                      |
+         +----------------------------+----------------------------+
+         |                                                         |
+  [ Overrun % <= 0% ]                                      [ Overrun % > 0% ]
+         |                                                         |
+         v                                                         v
+   Within Approved Ceiling                                  [ Is Overrun > 10%? ]
+   Normal Execution                                                |
+                                                     +-------------+-------------+
+                                                     |                           |
+                                                  [ NO ]                       [ YES ]
+                                                     |                           |
+                                                     v                           v
+                                               Moderate Overrun           CRITICAL ANOMALY
+                                               (Under 10% Buffer)         Violation of Rule-06!
+                                                                          Fresh Sanction Required
+
+----------------------------------------------------------------------------------------------------
+4.3 PAYMENT CLUSTERING (FISCAL YEAR-END RUSH DETECTOR)
+----------------------------------------------------------------------------------------------------
+
+               [ Extract Project Payment Ledger from SNA Feeds ]
+                                      |
+                                      v
+               [ Sort Payment Transactions Chronologically ]
+                                      |
+                                      v
+               [ Slide 7-Day Window Across Consecutive Vouchers ]
+                                      |
+                                      v
+         [ Are >= 3 Payments Released within <= 7 Calendar Days? ]
+                                      |
+                        +-------------+-------------+
+                        |                           |
+                     [ YES ]                      [ NO ]
+                        |                           |
+                        v                           v
+         [ Total Window Amount >= 50% Sanction? ]  Normal Payment Velocity
+                        |
+            +-----------+-----------+
+            |                       |
+         [ YES ]                  [ NO ]
+            |                       |
+            v                       v
+      CRITICAL ANOMALY         Standard Milestone Payout
+      Payment Clustering Flagged
+      "Fiscal year-end rush detected"
+
+----------------------------------------------------------------------------------------------------
+4.4 DUPLICATE WORK (SEMANTIC NLP + HAVERSINE GEOSPATIAL)
+----------------------------------------------------------------------------------------------------
+
+                 [ Compare Target Work (T1) vs Co-located Work (T2) ]
+                                      |
+                                      v
+                 [ Calculate Distance using Haversine Geodesic ]
+                                      |
+                         +------------+------------+
+                         |                         |
+                   [ Distance <= 1 km ]      [ Distance > 1 km ]
+                         |                         |
+                         v                         v
+           [ Compare Project Titles & Scope ]    Works Distinct Geographically
+                         |
+           - Jaccard Token Overlap (J)
+           - Levenshtein Character Metric (L)
+           - Cost Equality Ratio (C)
+                         |
+                         v
+           [ Score = 0.60*J + 0.20*L + 0.20*C ]
+                         |
+                         v
+                [ Is Score >= 80%? ]
+                         |
+           +-------------+-------------+
+           |                           |
+        [ YES ]                      [ NO ]
+           |                           |
+           v                           v
+     POTENTIAL DUPLICATE WORK      Distinct Projects
+     Similarity: >= 80%
+     "Verify Khasra & Plot records"
+
+
+====================================================================================================
+5. OFFICIAL 8-STAGE MPLADS MILESTONE LIFECYCLE FLOWCHART
+====================================================================================================
+
+   +--------------------------------------------------------------------+
+   | STAGE 01: MP RECOMMENDATION                                        |
+   | Hon'ble MP submits formal proposal in writing on e-Sakshi portal.  |
+   +--------------------------------------------------------------------+
+                                     |
+                                     v
+   +--------------------------------------------------------------------+
+   | STAGE 02: ADMINISTRATIVE SANCTION                                  |
+   | District Authority checks category eligibility & approves ceiling. |
+   +--------------------------------------------------------------------+
+                                     |
+                                     v
+   +--------------------------------------------------------------------+
+   | STAGE 03: TECHNICAL SANCTION                                       |
+   | Detailed estimate and Bill of Quantities (BOQ) vetted by Engineer. |
+   +--------------------------------------------------------------------+
+                                     |
+                                     v
+   +--------------------------------------------------------------------+
+   | STAGE 04: WORK ORDER ISSUED                                        |
+   | Transparent tendering completed; agency assigned work contract.    |
+   +--------------------------------------------------------------------+
+                                     |
+                                     v
+   +--------------------------------------------------------------------+
+   | STAGE 05: GROUND CIVIL EXECUTION                                   |
+   | Construction begins within mandatory 75 days of sanction date.     |
+   +--------------------------------------------------------------------+
+                                     |
+                                     v
+   +--------------------------------------------------------------------+
+   | STAGE 06: MILESTONE PAYMENTS & MEASUREMENT BOOK (MB) ENTRIES        |
+   | Running bills disbursed via SNA against verified MB & photos.      |
+   +--------------------------------------------------------------------+
+                                     |
+                                     v
+   +--------------------------------------------------------------------+
+   | STAGE 07: PROJECT COMPLETION                                       |
+   | Physical works completed; completion certificate formally issued.  |
+   +--------------------------------------------------------------------+
+                                     |
+                                     v
+   +--------------------------------------------------------------------+
+   | STAGE 08: ASSET GEOTAGGING & CITIZEN HANDOVER                      |
+   | Plaque installed at site; asset geotagged on ISRO Bhuvan portal.   |
+   +--------------------------------------------------------------------+
+
+
+====================================================================================================
+6. ROLE-BASED ACCESS & DYNAMIC DATA SCOPING FLOWCHART
+====================================================================================================
+
+                           [ User Selects Role in Header ]
+                                         |
+            +-----------------+----------+----------+-----------------+
+            |                 |                     |                 |
+            v                 v                     v                 v
+     [ 1. MINISTRY ]   [ 2. STATE NODAL ]    [ 3. DISTRICT AUTH ]  [ 4. MEMBER OF PARLIAMENT ]
+       (National)       (e.g., Uttar Pradesh)  (e.g., Varanasi)      (e.g., Varanasi PC-77)
+            |                 |                     |                 |
+            v                 v                     v                 v
+     National KPIs     State-wide Aggregates District Work Orders  Constituency Dashboard
+     All 36 States/UTs District Ranking      MB Audit & Vouchers   Releases & Field Status
+     Inter-State Trends Fund Release Slips   Agency Performance    Citizen Impact Metrics
+     Macro ML Health   State Risk Exposure   Site Inspection Log   Plaque & Handover
+
+
+====================================================================================================
+7. AUDIT ALERT TRIAGE & HUMAN-IN-THE-LOOP FEEDBACK FLOWCHART
+====================================================================================================
+
+                       [ New Anomaly Flagged by AI Engine ]
+                                         |
+                                         v
+                         [ Alert Displayed in Alert Center ]
+                                         |
+                                         v
+                       [ Official Reviews Flag & Evidence ]
+                                         |
+           +-----------------+-----------+-----------+-----------------+
+           |                 |                       |                 |
+           v                 v                       v                 v
+    [ ACKNOWLEDGE ]     [ ESCALATE ]          [ FALSE POSITIVE ]  [ RESOLVED ]
+    Set Status:         Set Status:           Set Status:         Set Status:
+    "Under Review"      "Escalated"           "False Positive"    "Resolved"
+           |                 |                       |                 |
+           v                 v                       v                 v
+    Assign to Field     Forward to State      Record Official     Work Rectified
+    Officer / EE        Nodal Authority /     Justification &     or Administrative
+    for Measurement     MoSPI High-Level      Inspection Report   Regularization
+    Audit               Inquiry Cell                 |            Completed
+           |                 |                       v                 |
+           +-----------------+-----------> [ Log in Immutable Audit ] <+
+                                                     |
+                                                     v
+                                       [ Retraining Dataset Updated ]
+                                       [ MLflow Model Calibration ]
+
+
+====================================================================================================
+8. HACKATHON 5-7 MINUTE DEMONSTRATION STORYLINE FLOWCHART
+====================================================================================================
+
+  [ 00:00 - 01:00 ]  STEP 1: NATIONAL OVERVIEW (MINISTRY ROLE)
+                     * Open dashboard at http://localhost:5173/
+                     * Point out national KPIs (124 works, 69.5% utilization, 19 high-risk).
+                     * Highlight "DEMO MODE — Synthetic Data" & ethical AI positioning.
+                           |
+                           v
+  [ 01:00 - 02:00 ]  STEP 2: ANOMALY DISCOVERY & PRIORITY TABLE
+                     * View "Priority Attention Required" table on Overview.
+                     * Point out that the AI engine automatically isolated critical outliers.
+                           |
+                           v
+  [ 02:00 - 03:15 ]  STEP 3: PROJECT DRILLDOWN (MPLADS-UP-VAR-001)
+                     * Click "Inspect" on Shivpur CC Road work.
+                     * Demonstrate 91 Risk Score & Explainable Factor Contribution Bar.
+                     * Walk through the 8-Stage Timeline & Payment Ledger.
+                     * Show Official Recommended Actions.
+                           |
+                           v
+  [ 03:15 - 04:00 ]  STEP 4: ROLE SWITCHING & ALERT INVESTIGATION
+                     * Switch role to "District Authority (Varanasi)" -> scope updates instantly.
+                     * Open "Alerts & Investigations".
+                     * Click "Acknowledge" on the critical alert; add note & persist to audit log.
+                           |
+                           v
+  [ 04:00 - 05:00 ]  STEP 5: GEOGRAPHIC INTELLIGENCE & SPATIAL RISK
+                     * Open "Geographic Intelligence" India map.
+                     * Filter by "Critical Risk" -> show red pulse markers across India.
+                     * Click marker to show drill-down popup card.
+                           |
+                           v
+  [ 05:00 - 06:00 ]  STEP 6: PREDICTIVE INSIGHTS & AI DECISION ASSISTANT
+                     * Open "Predictive Insights" -> show 12-month ARIMA utilization forecast.
+                     * Click "AI Decision Assistant" drawer in top bar -> ask "Which projects show
+                       progress mismatch?" and show real-time dynamic query results.
+                           |
+                           v
+  [ 06:00 - 07:00 ]  STEP 7: EXECUTIVE REPORTING & ML PRODUCTION BLUEPRINT
+                     * Open "Reports & Export" -> show print-ready preview with signature blocks.
+                     * Click "ML Architecture" in top bar -> present production cloud roadmap.
+                     * Conclude: Transparent, explainable, and production-ready for MoSPI.
+
+====================================================================================================
+                        END OF SPECIFICATION & BLUEPRINT FILE
+====================================================================================================
